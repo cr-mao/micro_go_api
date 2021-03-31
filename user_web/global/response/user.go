@@ -1,0 +1,20 @@
+package response
+
+import (
+	"fmt"
+	"time"
+)
+
+type Jsontime time.Time
+
+func (j Jsontime) MarshalJSON() ([]byte, error) {
+	var stmp = fmt.Sprintf("\"%s\"", time.Time(j).Format("2006-01-02"))
+	return []byte(stmp), nil
+}
+
+type UserResponse struct {
+	Id       int32  `json:"id"`
+	NickName string `json:"name"`
+	Birthday Jsontime `json:"birthday"`
+	Mobile   string `json:"mobile"`
+}
