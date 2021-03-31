@@ -2,6 +2,8 @@ package global
 
 import (
 	"bff/user_web/config"
+	ut "github.com/go-playground/universal-translator"
 )
 
-var ServerConfig *config.ServerConfig = &config.ServerConfig{}
+var Trans ut.Translator
+var ServerConfig = &config.ServerConfig{}

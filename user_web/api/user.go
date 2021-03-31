@@ -2,11 +2,12 @@ package api
 
 import "C"
 import (
-	"bff/user_web/global"
-	"bff/user_web/global/response"
 	"context"
 	"fmt"
+	"github.com/go-playground/validator/v10"
 	"net/http"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -15,8 +16,20 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"bff/user_web/forms"
+	"bff/user_web/global"
+	"bff/user_web/global/response"
 	"bff/user_web/proto"
 )
+
+//移除 struct 名字  默认struct.field_name   只要 field_name
+func removeTopStruct(fields map[string]string) map[string]string {
+	rsp := map[string]string{}
+	for field, err := range fields {
+		rsp[field[strings.Index(field, ".")+1:]] = err
+	}
+	return rsp
+}
 
 func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 	if err != nil {
@@ -48,6 +61,18 @@ func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 	}
 }
 
+func HandleValidateError(c *gin.Context, err error) {
+	errs, ok := err.(validator.ValidationErrors)
+	if !ok {
+		c.JSON(http.StatusOK, gin.H{
+			"msg": err.Error(),
+		})
+	}
+	c.JSON(http.StatusBadRequest, gin.H{
+		"error": removeTopStruct(errs.Translate(global.Trans)),
+	})
+}
+
 func GetUserList(c *gin.Context) {
 	ip := global.ServerConfig.UserSrvInfo.Host
 	port := global.ServerConfig.UserSrvInfo.Port
@@ -57,12 +82,20 @@ func GetUserList(c *gin.Context) {
 	}
 	defer conn.Close()
 	client := proto.NewUserClient(conn)
-	rsp, err := client.GetUserList(context.Background(), &proto.PageInfo{Pn: 1, PSize: 5})
+
+	pn := c.DefaultQuery("pn", "1")
+	pnInt, _ := strconv.Atoi(pn)
+	pSize := c.DefaultQuery("psize", "10")
+	pSizeInt, _ := strconv.Atoi(pSize)
+	rsp, err := client.GetUserList(context.Background(), &proto.PageInfo{
+		Pn:    uint32(pnInt),
+		PSize: uint32(pSizeInt),
+	})
+
 	if err != nil {
 		HandleGrpcErrorToHttp(err, c)
 		return
 	}
-
 	result := make([]interface{}, 0)
 
 	for _, value := range rsp.Data {
@@ -81,5 +114,16 @@ func GetUserList(c *gin.Context) {
 		//result = append(result, data)
 	}
 	c.JSON(http.StatusOK, result)
+}
 
+func PassWordLogin(c *gin.Context) {
+	passwordLoginForm := forms.PassWordLoginForm{}
+	if err := c.ShouldBind(&passwordLoginForm); err != nil {
+		HandleValidateError(c, err)
+		return
+	}
+	fmt.Println(passwordLoginForm)
+	c.JSON(http.StatusOK, gin.H{
+		"msg": "ok",
+	})
 }
