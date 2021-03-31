@@ -2,6 +2,7 @@ package api
 
 import "C"
 import (
+	"bff/user_web/global"
 	"bff/user_web/global/response"
 	"context"
 	"fmt"
@@ -48,9 +49,9 @@ func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 }
 
 func GetUserList(c *gin.Context) {
-	ip := "127.0.0.1"
-	port := "50052"
-	conn, err := grpc.Dial(fmt.Sprintf("%s:%s", ip, port), grpc.WithInsecure())
+	ip := global.ServerConfig.UserSrvInfo.Host
+	port := global.ServerConfig.UserSrvInfo.Port
+	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", ip, port), grpc.WithInsecure())
 	if err != nil {
 		zap.S().Errorw("[GetUserList] 连接服务失败", "msg", err.Error())
 	}
