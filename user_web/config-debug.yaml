@@ -8,3 +8,8 @@ jwt:
   key: 'dkdk@sksk$#@@'
   expire: 864000
   issuer: go-bff
+
+
+redis:
+  host: '127.0.0.1'
+  port: 6379
