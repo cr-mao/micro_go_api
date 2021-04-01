@@ -31,10 +31,18 @@ func InitSrvConn() {
 		userSrvPort = value.Port
 		break
 	}
+	if userSrvHost == "" {
+		zap.S().Fatal("consul 获得 user-srv ip:port 失败")
+		return
+	}
 	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", userSrvHost, userSrvPort), grpc.WithInsecure())
 	if err != nil {
-		zap.S().Errorw("[GetUserList] 连接服务失败", "msg", err.Error())
+		zap.S().Fatal("consul 获得 user-srv ip:port 失败")
+		return
 	}
+	// 1.后续用户服务下线了 ，2改端口了，改ip了 负责均衡策略
+	// 2.事先创建连接不用tcp3次握手了
+    // 3. 一个连接多个grountine 共用 ，性能问题， todo  连接池 https://github.com/processout/grpc-go-pool/blob/master/pool.go
 	//defer conn.Close()
 	client := proto.NewUserClient(conn)
 	global.UserSrvClient = client
