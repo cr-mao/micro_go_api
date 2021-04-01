@@ -1,16 +1,15 @@
 package api
 
 import (
-	"bff/user_web/middlewares"
-	"bff/user_web/models"
 	"context"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
+	"github.com/hashicorp/consul/api"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
@@ -21,6 +20,8 @@ import (
 	"bff/user_web/forms"
 	"bff/user_web/global"
 	"bff/user_web/global/response"
+	"bff/user_web/middlewares"
+	"bff/user_web/models"
 	"bff/user_web/proto"
 )
 
@@ -84,16 +85,32 @@ func GetUserList(c *gin.Context) {
 	//		fmt.Println(c.ID)
 	//	}
 	//}
+	cfg := api.DefaultConfig()
+	consulInfo := global.ServerConfig.ConsulInfo
+	cfg.Address = fmt.Sprintf("%s:%d", consulInfo.Host, consulInfo.Port)
+	consulClient, err := api.NewClient(cfg)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(fmt.Sprintf("Service == \"%s\"", global.ServerConfig.UserSrvInfo.ServerName))
+	data, err := consulClient.Agent().ServicesWithFilter(fmt.Sprintf("Service == \"%s\"", global.ServerConfig.UserSrvInfo.ServerName))
+	fmt.Println(data)
+	for _,value :=range data{
+		fmt.Printf("%#v",value)
+	}
 
 	ip := global.ServerConfig.UserSrvInfo.Host
 	port := global.ServerConfig.UserSrvInfo.Port
+
+
+
 	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", ip, port), grpc.WithInsecure())
 	if err != nil {
 		zap.S().Errorw("[GetUserList] 连接服务失败", "msg", err.Error())
 	}
 	defer conn.Close()
 	client := proto.NewUserClient(conn)
-
 	pn := c.DefaultQuery("pn", "1")
 	pnInt, _ := strconv.Atoi(pn)
 	pSize := c.DefaultQuery("psize", "10")

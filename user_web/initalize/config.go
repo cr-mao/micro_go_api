@@ -23,6 +23,7 @@ func InitConfig() {
 	if debug != "DEV" {
 		configSuffix = "pro"
 	}
+	// debug 模式 路径有点问题   ，可以临时替换成绝对路径  debug 值 也是有问题
 	v.SetConfigFile(fmt.Sprintf("config-%s.yaml", configSuffix))
 	if err := v.ReadInConfig(); err != nil {
 		panic(err)

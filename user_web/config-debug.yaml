@@ -3,6 +3,7 @@ port: 8081
 user_srv:
   host: '127.0.0.1'
   port: 50052
+  server_name: 'user-srv'
 
 jwt:
   key: 'dkdk@sksk$#@@'
@@ -13,3 +14,7 @@ jwt:
 redis:
   host: '127.0.0.1'
   port: 6379
+
+consul:
+  host: '127.0.0.1'
+  port: 8500
