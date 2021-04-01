@@ -35,6 +35,8 @@ func main() {
 			return t
 		})
 	}
+	//初始化连接 user-srv  grpc connect
+	initalize.InitSrvConn()
 	//初始化路由
 	Router := initalize.InitRouters()
 
