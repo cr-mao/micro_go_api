@@ -76,6 +76,15 @@ func HandleValidateError(c *gin.Context, err error) {
 }
 
 func GetUserList(c *gin.Context) {
+
+	//fmt.Println(c.Get("userId"))
+	//拿上下文信息
+	//if claims, ok := c.Get("claims"); ok {
+	//	if c, ok := claims.(*models.CustomClaims); ok {
+	//		fmt.Println(c.ID)
+	//	}
+	//}
+
 	ip := global.ServerConfig.UserSrvInfo.Host
 	port := global.ServerConfig.UserSrvInfo.Port
 	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", ip, port), grpc.WithInsecure())
@@ -124,6 +133,14 @@ func PassWordLogin(c *gin.Context) {
 		HandleValidateError(c, err)
 		return
 	}
+	//验证码 验证
+	if !store.Verify(passwordLoginForm.CaptchaId, passwordLoginForm.Captcha, true) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"captcha": "验证码错误",
+		})
+		return
+	}
+
 	ip := global.ServerConfig.UserSrvInfo.Host
 	port := global.ServerConfig.UserSrvInfo.Port
 	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", ip, port), grpc.WithInsecure())
