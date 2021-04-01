@@ -1,16 +1,15 @@
 package api
 
-import "C"
 import (
 	"context"
 	"fmt"
-	"github.com/go-playground/validator/v10"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -122,8 +121,53 @@ func PassWordLogin(c *gin.Context) {
 		HandleValidateError(c, err)
 		return
 	}
-	fmt.Println(passwordLoginForm)
-	c.JSON(http.StatusOK, gin.H{
-		"msg": "ok",
-	})
+	ip := global.ServerConfig.UserSrvInfo.Host
+	port := global.ServerConfig.UserSrvInfo.Port
+	conn, err := grpc.Dial(fmt.Sprintf("%s:%d", ip, port), grpc.WithInsecure())
+	if err != nil {
+		zap.S().Errorw("[GetUserList] 连接服务失败", "msg", err.Error())
+	}
+	defer conn.Close()
+	client := proto.NewUserClient(conn)
+	//登录逻辑
+
+	if resp, err := client.GetUserByMobile(context.Background(), &proto.MobileRequest{
+		Mobile: passwordLoginForm.Mobile,
+	}); err != nil {
+		if e, ok := status.FromError(err); ok {
+			switch e.Code() {
+			case codes.NotFound:
+				c.JSON(http.StatusBadRequest, map[string]string{
+					"mobile": "用户不存在",
+				})
+			default:
+				//fmt.Println(e.Code())
+				//fmt.Println(e.Err())
+				c.JSON(http.StatusInternalServerError, map[string]string{
+					"mobile": "登录失败",
+				})
+			}
+			return
+		}
+	} else {
+		//检测密码
+		if rsp, err := client.CheckPassword(context.Background(), &proto.PasswrodCheckInfo{
+			Password:          passwordLoginForm.PassWord,
+			EncryptedPassword: resp.PassWord,
+		}); err != nil {
+			c.JSON(http.StatusInternalServerError, map[string]string{
+				"mobile": "登录失败",
+			})
+		} else {
+			if rsp.Success {
+				c.JSON(http.StatusOK, map[string]string{
+					"msg": "登录成功",
+				})
+			} else {
+				c.JSON(http.StatusBadRequest, map[string]string{
+					"msg": "登录失败",
+				})
+			}
+		}
+	}
 }
