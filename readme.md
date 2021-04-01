@@ -1,16 +1,22 @@
 
-
-
-
 # micro service  backend for front 
 
 
 框架：gin
+
+数据库：mysql
+
+缓存 :redis
+
+服务注册: consul 
+
 日志记录： zap
-配置文件：viper 
+
+配置：viper 
+
 用户认证：jwt 
 
-
+图形验证码: base64Captcha
 
 
 #### 便捷
