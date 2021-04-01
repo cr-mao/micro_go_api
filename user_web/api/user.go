@@ -1,8 +1,11 @@
 package api
 
 import (
+	"bff/user_web/middlewares"
+	"bff/user_web/models"
 	"context"
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"net/http"
 	"strconv"
 	"strings"
@@ -160,8 +163,31 @@ func PassWordLogin(c *gin.Context) {
 			})
 		} else {
 			if rsp.Success {
-				c.JSON(http.StatusOK, map[string]string{
-					"msg": "登录成功",
+				j := middlewares.NewJWT()
+				claims := models.CustomClaims{
+					ID:          uint(resp.Id),
+					NickName:    resp.NickName,
+					AuthorityId: 1,
+					StandardClaims: jwt.StandardClaims{
+						NotBefore: time.Now().Unix(),                                             //签名生效时间
+						ExpiresAt: time.Now().Unix() + int64(global.ServerConfig.JWTInfo.Expire), //失效时间
+						Issuer:    global.ServerConfig.JWTInfo.Issuer,
+					},
+				}
+				token, err := j.CreateToken(claims)
+				if err != nil {
+					c.JSON(http.StatusInternalServerError, gin.H{
+						"msg": "生成token失败",
+					})
+					return
+				}
+
+				c.JSON(http.StatusOK, gin.H{
+					"msg":        "登录成功",
+					"token":      token,
+					"id":         resp.Id,
+					"nick_name":  resp.NickName,
+					"expired_at": (time.Now().Unix() + int64(global.ServerConfig.JWTInfo.Expire)) * 1000,
 				})
 			} else {
 				c.JSON(http.StatusBadRequest, map[string]string{

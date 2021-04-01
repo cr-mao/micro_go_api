@@ -5,9 +5,10 @@
 # micro service  backend for front 
 
 
-框架选型：gin
-日志： zap
+框架：gin
+日志记录： zap
 配置文件：viper 
+用户认证：jwt 
 
 
 
