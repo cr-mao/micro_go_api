@@ -22,7 +22,6 @@ func main() {
 	if err := initalize.InitTrans("zh"); err != nil {
 		panic(err.Error())
 	}
-
 	//注册自定义验证器
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		_ = v.RegisterValidation("mobile", myvalidator.ValidateMobile)
@@ -39,7 +38,6 @@ func main() {
 	initalize.InitSrvConn()
 	//初始化路由
 	Router := initalize.InitRouters()
-
 	port := global.ServerConfig.Port
 	zap.S().Infof("启动服务器端口: %d", port)
 	if err := Router.Run(fmt.Sprintf(":%d", port)); err != nil {

@@ -1,6 +1,7 @@
 package initalize
 
 import (
+	"bff/user_web/utils"
 	"fmt"
 
 	"github.com/spf13/viper"
@@ -20,8 +21,13 @@ func InitConfig() {
 	debug := GetEnv("ENV")
 	//fmt.Println(debug)
 	configSuffix := "debug"
+	//生成环境 使用随机端口 ，开发环境使用 固定端口
 	if debug != "DEV" {
 		configSuffix = "pro"
+		port, err := utils.GetFreePort()
+		if err == nil {
+			global.ServerConfig.Port = port
+		}
 	}
 	// debug 模式 路径有点问题   ，可以临时替换成绝对路径  debug 值 也是有问题
 	v.SetConfigFile(fmt.Sprintf("config-%s.yaml", configSuffix))
