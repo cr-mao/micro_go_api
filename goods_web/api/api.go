@@ -1,10 +1,13 @@
 package api
 
 import (
-	"bff/user_web/global"
+	"bff/goods_web/global"
 	"context"
 	"fmt"
+	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"math/rand"
 	"net/http"
 	"strings"
@@ -57,5 +60,56 @@ func GetSmsCode(ctx *gin.Context) {
 	redisCli.Set(context.Background(), tel, smsCode, 60*time.Second)
 	ctx.JSON(http.StatusOK, gin.H{
 		"msg": "发送验证成功",
+	})
+}
+
+//移除 struct 名字  默认struct.field_name   只要 field_name
+func removeTopStruct(fields map[string]string) map[string]string {
+	rsp := map[string]string{}
+	for field, err := range fields {
+		rsp[field[strings.Index(field, ".")+1:]] = err
+	}
+	return rsp
+}
+
+func HandleGrpcErrorToHttp(err error, c *gin.Context) {
+	if err != nil {
+		if e, ok := status.FromError(err); ok {
+			switch e.Code() {
+			case codes.NotFound:
+				c.JSON(http.StatusNotFound, gin.H{
+					"msg": e.Message(),
+				})
+			case codes.Internal:
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"msg": "内部错误",
+				})
+			case codes.InvalidArgument:
+				c.JSON(http.StatusBadRequest, gin.H{
+					"msg": "参数错误",
+				})
+			case codes.Unavailable:
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"msg": "用户服务不可用",
+				})
+			default:
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"msg": "其他错误" + e.Message(),
+				})
+			}
+			return
+		}
+	}
+}
+
+func HandleValidateError(c *gin.Context, err error) {
+	errs, ok := err.(validator.ValidationErrors)
+	if !ok {
+		c.JSON(http.StatusOK, gin.H{
+			"msg": err.Error(),
+		})
+	}
+	c.JSON(http.StatusBadRequest, gin.H{
+		"error": removeTopStruct(errs.Translate(global.Trans)),
 	})
 }

@@ -1,6 +1,6 @@
 package config
 
-type UserSrvConfig struct {
+type GoodsSrvConfig struct {
 	Host       string `mapstructure:"host" json:"host"`
 	Port       int    `mapstructure:"port" json:"port"`
 	ServerName string `mapstructure:"server_name" json:"server_name"`
@@ -9,7 +9,7 @@ type UserSrvConfig struct {
 type ServerConfig struct {
 	Name        string        `mapstructure:"name" json:"name"`
 	Port        int           `mapstructure:"port" json:"port"`
-	UserSrvInfo UserSrvConfig `mapstructure:"user_srv" json:"user_srv"`
+	GoodsSrvInfo GoodsSrvConfig `mapstructure:"goods_srv" json:"goods_srv"`
 	JWTInfo     JWTConfig     `mapstructure:"jwt" json:"jwt"`
 	RedisInfo   RedisConfig   `mapstructure:"redis" json:"redis"`
 	ConsulInfo  ConsulConfig  `mapstructure:"consul" json:"consul"`

@@ -2,12 +2,13 @@ package middlewares
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
 	"net/http"
 
-	"bff/user_web/global"
-	"bff/user_web/models"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
+
+	"bff/goods_web/global"
+	"bff/goods_web/models"
 )
 
 var (

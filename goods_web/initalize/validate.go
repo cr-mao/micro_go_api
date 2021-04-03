@@ -1,7 +1,7 @@
 package initalize
 
 import (
-	"bff/user_web/global"
+	"bff/goods_web/global"
 	"fmt"
 	"github.com/gin-gonic/gin/binding"
 	en2 "github.com/go-playground/locales/en"

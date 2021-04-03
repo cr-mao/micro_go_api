@@ -10,9 +10,9 @@ import (
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
-	"bff/user_web/config"
-	"bff/user_web/global"
-	"bff/user_web/utils"
+	"bff/goods_web/config"
+	"bff/goods_web/global"
+	"bff/goods_web/utils"
 )
 
 func GetEnv(env string) string {

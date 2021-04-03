@@ -1,15 +1,14 @@
 package main
 
 import (
-	"bff/user_web/global"
+	"bff/goods_web/global"
 	"fmt"
 	"github.com/gin-gonic/gin/binding"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
 
-	"bff/user_web/initalize"
-	myvalidator "bff/user_web/validator"
+	"bff/goods_web/initalize"
 )
 
 func main() {
@@ -24,7 +23,6 @@ func main() {
 	}
 	//注册自定义验证器
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		_ = v.RegisterValidation("mobile", myvalidator.ValidateMobile)
 		//翻译问题
 		// https://github.com/go-playground/validator/blob/v9/_examples/translations/main.go#L105
 		_ = v.RegisterTranslation("mobile", global.Trans, func(ut ut.Translator) error {

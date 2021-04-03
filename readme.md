@@ -28,9 +28,11 @@ golang版本要求 1.15+
 
 - 框架：gin
 
+- 配置中心: nacos
+
 - 缓存 :redis
 
-- 服务注册: consul 
+- 服务发现: [grpc-consul-resolver](https://github.com/mbobakov/grpc-consul-resolver)
 
 - 日志记录： zap
 
@@ -40,14 +42,22 @@ golang版本要求 1.15+
 
 
 
-### 启动consul
-下载mac版二进制consul,默认服务端口 127.0.0.1:8500
-```shell script
-consul agent -dev
+quickstart 
+
+```shell 
+#启动consul
+#下载mac版二进制consul,默认服务端口 127.0.0.1:8500
+
+$ consul agent -dev
+
+#启动nacos 
+$ docker run --name nacos-standalone -e MODE=standalone -e JVM_XMS=512m -e JVM_XMX=512m -e JVM_XMN=256m -p 8848:8848 -d nacos/nacos-server:latest
+
+
+# 生成proto代码
+$ protoc --proto_path=user_web/proto --go_out=plugins=grpc:user_web/proto user.proto
+$  protoc --proto_path=goods_web/proto --go_out=plugins=grpc:goods_web/proto goods.proto
 ```
 
 
-#### 生成proto代码
-```shell script
-protoc --proto_path=user_web/proto --go_out=plugins=grpc:user_web/proto user.proto
-```
+
