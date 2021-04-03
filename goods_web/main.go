@@ -1,18 +1,20 @@
 package main
 
 import (
-	"bff/goods_web/global"
-	"bff/goods_web/initalize"
-	"bff/goods_web/utils/register/consul"
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/gin-gonic/gin/binding"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	"github.com/satori/go.uuid"
 	"go.uber.org/zap"
-	"os"
-	"os/signal"
-	"syscall"
+
+	"bff/goods_web/global"
+	"bff/goods_web/initalize"
+	"bff/goods_web/utils/register/consul"
 )
 
 func main() {

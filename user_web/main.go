@@ -1,14 +1,19 @@
 package main
 
 import (
-	"bff/user_web/global"
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/gin-gonic/gin/binding"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
+	"github.com/satori/go.uuid"
 	"go.uber.org/zap"
 
+	"bff/goods_web/utils/register/consul"
+	"bff/user_web/global"
 	"bff/user_web/initalize"
 	myvalidator "bff/user_web/validator"
 )
@@ -40,9 +45,26 @@ func main() {
 	//初始化路由
 	Router := initalize.InitRouters()
 	port := global.ServerConfig.Port
+
+	registerClient := consul.NewRegistryClient(global.ServerConfig.ConsulInfo.Host, global.ServerConfig.ConsulInfo.Port)
+	//  对外服务的ip
+	serviceId := fmt.Sprintf("%s", uuid.NewV4())
+	err := registerClient.Register(global.ServerConfig.Host, global.ServerConfig.Port, global.ServerConfig.Name, global.ServerConfig.Tags, serviceId)
+	if err != nil {
+		zap.S().Panic("服务注册失败", err.Error())
+	}
 	zap.S().Infof("启动服务器端口: %d", port)
-	if err := Router.Run(fmt.Sprintf(":%d", port)); err != nil {
-		zap.S().Panic("启动失败", err.Error())
+
+	go func() {
+		if err := Router.Run(fmt.Sprintf(":%d", port)); err != nil {
+			zap.S().Panic("启动失败", err.Error())
+		}
+	}()
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
+	<-quit
+	if err = registerClient.DeRegister(serviceId); err != nil {
+		zap.S().Panic("注销失败", err.Error())
 	}
 
 }
