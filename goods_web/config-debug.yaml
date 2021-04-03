@@ -19,3 +19,11 @@ consul:
   host: '127.0.0.1'
   port: 8500
 
+nacos:
+  host: "127.0.0.1"
+  port: 8848
+  namespace: "f59db538-cb44-45e0-96fd-3f4262e37e5b"
+  user: "nacos"
+  password: "nacos"
+  dataid: "python-user-srv.json"
+  group: "dev"
