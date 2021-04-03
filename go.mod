@@ -15,6 +15,7 @@ require (
 	github.com/mbobakov/grpc-consul-resolver v1.4.3
 	github.com/mojocn/base64Captcha v1.3.1
 	github.com/nacos-group/nacos-sdk-go v1.0.7
+	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/spf13/viper v1.7.1
 	go.uber.org/zap v1.16.0
 	golang.org/x/image v0.0.0-20210220032944-ac19c3e999fb // indirect

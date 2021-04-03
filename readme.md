@@ -5,6 +5,7 @@
 golang版本要求 1.15+
 
 ```
+├── goods_web 商品bff层
 ├── user_web  用户bff层
     ├── api   具体业务处理
     ├── config 配置
