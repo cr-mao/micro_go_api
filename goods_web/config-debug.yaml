@@ -1,6 +1,9 @@
 name: 'goods-web'
 port: 8082
-user_srv:
+host: "127.0.0.1"
+tags: ["bff","goods-web"],
+
+goods_srv:
   host: '127.0.0.1'
   port: 50052
   server_name: 'goods-srv'

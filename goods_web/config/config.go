@@ -1,5 +1,6 @@
 package config
 
+// python goods-srv  配置信息
 type GoodsSrvConfig struct {
 	Host       string `mapstructure:"host" json:"host"`
 	Port       int    `mapstructure:"port" json:"port"`
@@ -7,12 +8,14 @@ type GoodsSrvConfig struct {
 }
 
 type ServerConfig struct {
-	Name        string        `mapstructure:"name" json:"name"`
-	Port        int           `mapstructure:"port" json:"port"`
+	Name         string         `mapstructure:"name" json:"name"`
+	Port         int            `mapstructure:"port" json:"port"`
+	Host         string         `mapstructure:"host" json:"host"`
+	Tags         []string       `mapstructure:"tags" json:"tags"`
 	GoodsSrvInfo GoodsSrvConfig `mapstructure:"goods_srv" json:"goods_srv"`
-	JWTInfo     JWTConfig     `mapstructure:"jwt" json:"jwt"`
-	RedisInfo   RedisConfig   `mapstructure:"redis" json:"redis"`
-	ConsulInfo  ConsulConfig  `mapstructure:"consul" json:"consul"`
+	JWTInfo      JWTConfig      `mapstructure:"jwt" json:"jwt"`
+	RedisInfo    RedisConfig    `mapstructure:"redis" json:"redis"`
+	ConsulInfo   ConsulConfig   `mapstructure:"consul" json:"consul"`
 }
 
 type RedisConfig struct {
@@ -39,4 +42,3 @@ type NacosConfig struct {
 	DataId    string `mapstructure:"dataid" json:"dataid"`
 	Group     string `mapstructure:"group" json:"group"`
 }
-
