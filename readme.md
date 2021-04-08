@@ -5,8 +5,9 @@
 golang版本要求 1.15+
 
 ```
-├── goods_web 商品bff层
-├── user_web  用户bff层
+├── order_web order
+├── goods_web goods
+├── user_web  user
     ├── api   具体业务处理
     ├── config 配置
     ├── forms  表单
@@ -31,7 +32,9 @@ golang版本要求 1.15+
 
 - 配置中心: nacos
 
-- 缓存 :redis
+- 缓存: redis
+
+- 服务注册: consul
 
 - 服务发现: [grpc-consul-resolver](https://github.com/mbobakov/grpc-consul-resolver)
 
@@ -57,7 +60,17 @@ $ docker run --name nacos-standalone -e MODE=standalone -e JVM_XMS=512m -e JVM_X
 
 # 生成proto代码
 $ protoc --proto_path=user_web/proto --go_out=plugins=grpc:user_web/proto user.proto
-$  protoc --proto_path=goods_web/proto --go_out=plugins=grpc:goods_web/proto goods.proto
+$ protoc --proto_path=goods_web/proto --go_out=plugins=grpc:goods_web/proto goods.proto
+# protoc --proto_path=order_web/proto --go_out=plugins=grpc:order_web/proto order.proto
+# protoc --proto_path=order_web/proto --go_out=plugins=grpc:order_web/proto inventory.proto
+
+#启动用户服务
+$cd user_web
+$go run main.go
+
+#启动商品服务
+$ cd goods_web
+$ go run main.go 
 ```
 
 

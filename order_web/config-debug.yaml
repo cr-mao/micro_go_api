@@ -1,0 +1,28 @@
+name: 'goods-web'
+port: 8082
+host: "127.0.0.1"
+tags: ["bff","goods-web"],
+
+goods_srv:
+  server_name: 'goods-srv'
+
+order_srv:
+  server_name: 'order_srv'
+
+inventory_srv:
+  server_name: 'inventory_srv'
+
+jwt:
+  key: 'dkdk@sksk$#@@'
+  expire: 864000
+  issuer: go-bff
+
+
+redis:
+  host: '127.0.0.1'
+  port: 6379
+
+consul:
+  host: '127.0.0.1'
+  port: 8500
+

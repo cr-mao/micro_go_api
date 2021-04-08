@@ -1,0 +1,7 @@
+host: "127.0.0.1"
+port: 8848
+namespace: "df0238af-c0eb-470a-9395-23dee67bdc97"
+user: "nacos"
+password: "nacos"
+dataid: "go-order-web.json"
+group: "dev"
