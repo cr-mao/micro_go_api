@@ -57,21 +57,14 @@ $ consul agent -dev
 #启动nacos 
 $ docker run --name nacos-standalone -e MODE=standalone -e JVM_XMS=512m -e JVM_XMX=512m -e JVM_XMN=256m -p 8848:8848 -d nacos/nacos-server:latest
 
-
 # 生成proto代码
-$ protoc --proto_path=user_web/proto --go_out=plugins=grpc:user_web/proto user.proto
-$ protoc --proto_path=goods_web/proto --go_out=plugins=grpc:goods_web/proto goods.proto
-# protoc --proto_path=order_web/proto --go_out=plugins=grpc:order_web/proto order.proto
-# protoc --proto_path=order_web/proto --go_out=plugins=grpc:order_web/proto inventory.proto
-# protoc --proto_path=order_web/proto --go_out=plugins=grpc:order_web/proto goods.proto
+$ make codegen
+ 
 
-#启动用户服务
-$cd user_web
-$go run main.go
-
-#启动商品服务
-$ cd goods_web
-$ go run main.go 
+# 启动服务
+make user_serve
+make goods_serve
+make order_serve
 ```
 
 
