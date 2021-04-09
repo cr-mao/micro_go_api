@@ -63,6 +63,7 @@ $ protoc --proto_path=user_web/proto --go_out=plugins=grpc:user_web/proto user.p
 $ protoc --proto_path=goods_web/proto --go_out=plugins=grpc:goods_web/proto goods.proto
 # protoc --proto_path=order_web/proto --go_out=plugins=grpc:order_web/proto order.proto
 # protoc --proto_path=order_web/proto --go_out=plugins=grpc:order_web/proto inventory.proto
+# protoc --proto_path=order_web/proto --go_out=plugins=grpc:order_web/proto goods.proto
 
 #启动用户服务
 $cd user_web
