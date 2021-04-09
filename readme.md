@@ -38,11 +38,15 @@ golang版本要求 1.15+
 
 - 服务发现: [grpc-consul-resolver](https://github.com/mbobakov/grpc-consul-resolver)
 
+- 链路追踪: jaeger 
+
 - 日志记录： zap
 
 - 配置：viper 
 
 - 用户认证：jwt 
+
+
 
 
 
