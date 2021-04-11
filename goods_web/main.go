@@ -42,6 +42,10 @@ func main() {
 	initalize.InitSrvConn()
 	//初始化路由
 	Router := initalize.InitRouters()
+
+	// 初始化 Sentinel
+	initalize.InitSentinel()
+
 	port := global.ServerConfig.Port
 
 	registerClient := consul.NewRegistryClient(global.ServerConfig.ConsulInfo.Host, global.ServerConfig.ConsulInfo.Port)
